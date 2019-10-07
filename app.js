@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 
 const aboutUsRoutes = require('./routes/about-us');
 const userRoutes = require('./routes/user');
+const messageRoutes = require('./routes/message');
 
 const database = require('./config/database');
 
@@ -31,3 +32,5 @@ app.use(bodyParser.json());
 app.use('/about-us', aboutUsRoutes);
 
 app.use('/users', userRoutes);
+
+app.use('/messages', messageRoutes);

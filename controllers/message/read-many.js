@@ -1,17 +1,25 @@
-const AboutUsModal = require('../../models/about-us').modal;
+const MessageModal = require('../../models/message').modal;
 const ResUtil = require('../../utils/response');
 
+const JWTUtil = require('../../utils/jwt');
+
 /**
- * Read Multiple About Us
- * @return [about] an array of About Us
+ * Read Multiple Message
+ * @return [message] an array of Messages
  * @error invalid request
  * @error internal server error
  */
-exports['v1'] = (request, response) => {
+exports['v1'] = async (request, response) => {
+  const [jwtError, user] = await JWTUtil.verifyAndGetData(request.headers);
+
+  if (jwtError) {
+    return ResUtil.unauthorizedRequest(response);
+  }
+
   /* Process Request */
-  AboutUsModal.find().exec((error, data) => {
+  MessageModal.find().exec((error, data) => {
     if (error) {
-      return ResUtil.error(response, error, 'Error getting About US');
+      return ResUtil.error(response, error, 'Error getting Messages');
     }
 
     /* Get Manipulated data */
