@@ -1,6 +1,8 @@
 const AboutUsModal = require('../../models/about-us').modal;
 const ResUtil = require('../../utils/response');
 
+const JWTUtil = require('../../utils/jwt');
+
 /**
  * Create About Us
  * @param object request.body | about us payload
@@ -8,7 +10,13 @@ const ResUtil = require('../../utils/response');
  * @error invalid input
  * @error internal server error
  */
-exports['v1'] = (request, response) => {
+exports['v1'] = async (request, response) => {
+  const [jwtError, user] = await JWTUtil.verifyAndGetData(request.headers);
+
+  if (jwtError) {
+    return ResUtil.unauthorizedRequest(response);
+  }
+
   /* Convert payload to Modal */
   const aboutUs = new AboutUsModal(request.body);
 

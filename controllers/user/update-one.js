@@ -1,11 +1,13 @@
-const AboutUsModal = require('../../models/about-us').modal;
+const bcrypt = require('bcrypt');
+
+const UserModal = require('../../models/user').modal;
 const Merger = require('../../app/merger');
 const ResUtil = require('../../utils/response');
 
-const JWTUtil = require('../../utils/jwt');
+const saltRounds = 10;
 
 /**
- * Update About Us
+ * Update User
  * The Point of update will be the point until where the key is mentioned in string form.
  * @param string request.param.id | about us id
  * @return message success message
@@ -13,22 +15,21 @@ const JWTUtil = require('../../utils/jwt');
  * @error internal server error
  */
 exports['v1'] = async (request, response) => {
-  const [jwtError, user] = await JWTUtil.verifyAndGetData(request.headers);
-
-  if (jwtError) {
-    return ResUtil.unauthorizedRequest(response);
-  }
-
   let id = request.params.id;
 
+  let body = request.body;
   /* Convert payload to Modal */
-  const body = request.body;
-  const aboutUs = new AboutUsModal(await Merger.object(AboutUsModal, id, body));
+  const user = new UserModal(await Merger.object(UserModal, id, body));
 
   /* Validate Payload */
-  const error = aboutUs.validateSync();
+  const error = user.validateSync();
   if (error) {
     return ResUtil.invalidInput(response, error.errors, 'Invalid Payload');
+  }
+
+  if (body.password) {
+    const salt = bcrypt.genSaltSync(saltRounds);
+    body.password = bcrypt.hashSync(body.password, salt);
   }
 
   /* Prepare Request */
@@ -39,10 +40,10 @@ exports['v1'] = async (request, response) => {
   };
 
   /* Process Request */
-  AboutUsModal.updateOne(where, projection).exec(async (error, data) => {
+  UserModal.updateOne(where, projection).exec(async (error, data) => {
     if (error) {
-      return ResUtil.error(response, error, 'Error updating about us');
+      return ResUtil.error(response, error, 'Error updating user');
     }
-    return ResUtil.success(response, 'About Us Updated');
+    return ResUtil.success(response, 'User Updated');
   });
 };

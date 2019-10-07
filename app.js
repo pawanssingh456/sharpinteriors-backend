@@ -4,6 +4,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 
 const aboutUsRoutes = require('./routes/about-us');
+const userRoutes = require('./routes/user');
 
 const database = require('./config/database');
 
@@ -28,3 +29,5 @@ app.listen(port, () =>
 app.use(bodyParser.json());
 
 app.use('/about-us', aboutUsRoutes);
+
+app.use('/users', userRoutes);

@@ -92,3 +92,14 @@ exports.error = (response, error, message) => {
     message: message
   });
 };
+
+/**
+ * Response structure for 401 Unauthorized Request
+ * @param object response | from request
+ */
+exports.unauthorizedRequest = response => {
+  response.status(401).json({
+    error: true,
+    message: 'Unauthorized Request'
+  });
+};

@@ -1,6 +1,8 @@
 const AboutUsModal = require('../../models/about-us').modal;
 const ResUtil = require('../../utils/response');
 
+const JWTUtil = require('../../utils/jwt');
+
 /**
  * Delete About Us
  * @param string request.param.id | about us id
@@ -8,7 +10,13 @@ const ResUtil = require('../../utils/response');
  * @error invalid request
  * @error internal server error
  */
-exports['v1'] = (request, response) => {
+exports['v1'] = async (request, response) => {
+  const [jwtError, user] = await JWTUtil.verifyAndGetData(request.headers);
+
+  if (jwtError) {
+    return ResUtil.unauthorizedRequest(response);
+  }
+
   let id = request.params.id;
 
   /* Prepare Request */
