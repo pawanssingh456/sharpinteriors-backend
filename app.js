@@ -6,6 +6,7 @@ const bodyParser = require('body-parser');
 const aboutUsRoutes = require('./routes/about-us');
 const userRoutes = require('./routes/user');
 const messageRoutes = require('./routes/message');
+const productRoutes = require('./routes/product');
 
 const database = require('./config/database');
 
@@ -34,3 +35,5 @@ app.use('/about-us', aboutUsRoutes);
 app.use('/users', userRoutes);
 
 app.use('/messages', messageRoutes);
+
+app.use('/products', productRoutes);
